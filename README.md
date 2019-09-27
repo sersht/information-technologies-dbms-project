@@ -1,2 +1,2 @@
-# information-technologies-dbms-project
-Custom partially implemented DBMS
+## Custom partially implemented DBMS
+#### KNU, Faculty of Cybernetics, 4th year, Information Technologies
