@@ -1,3 +1,4 @@
+import base64
 from pathlib import Path
 
 class Image:
@@ -9,7 +10,7 @@ class Image:
         self._imageType = imageType
 
         with open(imagePath, 'rb') as file:
-            self._imageBytes = file.read().decode('latin_1')
+            self._imageBytesBase64 = base64.b64encode(file.read())
     
     def save(self, directoryPath):
         if not Path(directoryPath).is_dir():
@@ -18,7 +19,10 @@ class Image:
         fullImagePath = directoryPath + self._imageName + '.' + self._imageType
     
         with open(fullImagePath, 'xb') as file:
-            file.write(self._imageBytes.encode('latin_1'))
-            
-#img = Image('C:\\Projects\\information-technologies-dbms-project\\project\\t.jpg', imageType='txt')
-#img.save('C:\\Projects\\information-technologies-dbms-project\\project\\')
+            file.write(base64.b64decode(self._imageBytesBase64))
+           
+#img = Image('C:\\Projects\\information-technologies-dbms-project\\project\\t.txt', imageType='jpg')
+# with open('C:\\Projects\\information-technologies-dbms-project\\project\\t.txt', 'r') as file:
+#     a = file.read()
+#     with open('C:\\Projects\\information-technologies-dbms-project\\project\\q.jpg', 'xb') as img:
+#         img.write(base64.b64decode(a))
