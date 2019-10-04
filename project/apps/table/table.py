@@ -68,4 +68,12 @@ class Table:
             remove(tablePath)
         else:
             raise Exception('Deleting non existing file')
+
+    def update(self, recordIndex, fieldIndex, value):
+        if not isinstance(value, self.types[fieldIndex]):
+            raise ValueError(
+                'New value type should be ' + str(self.types[fieldIndex]) +
+                ' instead of ' + str(type(value)))
         
+        self.records[recordIndex][fieldIndex] = value
+
