@@ -1,4 +1,7 @@
 from copy import deepcopy
+from json import dump, load
+from pathlib import Path
+from os import remove
 
 # Temporary storing all records in table as two-dimensional list (array)
 # Maybe later will switch on dictionaries or objects if needed
@@ -8,12 +11,12 @@ from copy import deepcopy
 
 class Table:
 
-    def __init__(self, name, columnNames, columnTypes, database):
+    def __init__(self, name, columnNames, columnTypes, databaseRoot):
         if len(columnNames) != len(columnTypes):
             raise ValueError(
                 'Unequal length of column-type and column-name lists')
 
-        self.creatorDb = database
+        self.creatorDbRoot = databaseRoot
         self.name = name
         self.columns = columnNames
         self.types = columnTypes
@@ -53,4 +56,16 @@ class Table:
             self.records.pop()
         else:
             self.records.pop(index)
-            
+
+    def saveOnStorage(self):
+        tablePath = self.creatorDb.root + name + '.table'
+        with open(tablePath, 'w') as file:
+            dump(self.__dict__, file)
+
+    def deleteFromStorage(self):
+        tablePath = self.creatorDb.root + name + '.table'
+        if Path(tablePath).is_file():
+            remove(tablePath)
+        else:
+            raise Exception('Deleting non existing file')
+        
