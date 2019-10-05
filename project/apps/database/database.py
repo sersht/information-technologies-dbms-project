@@ -3,7 +3,7 @@ from json import dump, load
 from shutil import rmtree
 from pathlib import Path
 
-# Replace as import from manager
+# Replace as import from controller
 DATABASES_ROOT_DIRECTORY = 'C:\Projects\database\\'
 
 
