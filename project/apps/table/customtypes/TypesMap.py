@@ -1,7 +1,7 @@
-from Image import Image
-from Segment import Segment
+from .Image import Image
+from .Segment import Segment
 
-TYPE = {
+TYPE_BY_CODE = {
     'int': int,
     'str': str,
     'float': float,
