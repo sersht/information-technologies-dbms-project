@@ -3,10 +3,12 @@ from json import dump, load
 from shutil import rmtree
 from pathlib import Path
 
-# Replace as import from controller
+
+# TODO: Replace as import from controller
 DATABASES_ROOT_DIRECTORY = 'C:\\Projects\\database\\'
 
 
+# Database essentially is a context for tables
 class Database:
 
     @staticmethod
@@ -16,7 +18,9 @@ class Database:
         database.root = DATABASES_ROOT_DIRECTORY + name + '\\'
         database.tables = []
 
-        makedirs(database.root)
+        if not Path(database.root).exists():
+            makedirs(database.root)
+        
         database.saveOnStorage()
 
         return database
@@ -25,12 +29,12 @@ class Database:
     def restore(configPath):
         if not Path(configPath).is_file():
             raise ValueError('Given path is not a file')
-        
+
         database = Database()
 
         with open(configPath, 'r') as file:
             database.__dict__ = load(file)
-        
+
         return database
 
     def saveOnStorage(self):
