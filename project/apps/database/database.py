@@ -4,13 +4,13 @@ from shutil import rmtree
 from pathlib import Path
 
 # Replace as import from controller
-DATABASES_ROOT_DIRECTORY = 'C:\Projects\database\\'
+DATABASES_ROOT_DIRECTORY = 'C:\\Projects\\database\\'
 
 
 class Database:
 
     @staticmethod
-    def create(self, name):
+    def create(name):
         database = Database()
         database.name = name
         database.root = DATABASES_ROOT_DIRECTORY + name + '\\'
