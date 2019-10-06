@@ -2,7 +2,7 @@ import json
 import os
 from copy import deepcopy
 from pathlib import Path
-from customtypes.TypesMap import TYPE_BY_CODE
+from .customtypes.TypesMap import TYPE_BY_CODE
 
 
 # Temporary storing all records in table as two-dimensional list (array)
@@ -25,6 +25,8 @@ class Table:
         table.columns = columnNames
         table.types = columnTypes
         table.records = []
+
+        table.saveOnStorage()
 
         return table
 
