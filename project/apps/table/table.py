@@ -1,7 +1,8 @@
+import json
+import os
 from copy import deepcopy
-from json import dump, load
 from pathlib import Path
-from os import remove
+from customtypes.TypesMap import TYPE_BY_CODE 
 
 # Temporary storing all records in table as two-dimensional list (array)
 # Maybe later will switch on dictionaries or objects if needed
@@ -24,10 +25,11 @@ class Table:
 
     def _checkTypesOf(self, values):
         for i in range(len(values)):
-            if not isinstance(value[i], self.types[i]):
+            neededType = TYPE_BY_CODE[self.types[i]]
+            if not isinstance(values[i], neededType):
                 raise ValueError(
-                    i + '-th field should be type ' + str(self.types[i]) + 
-                    ' instead of ' + str(type(value[i])))
+                    i + '-th field should be type ' + str(neededType) + 
+                    ' instead of ' + str(type(values[i])))
 
     def _checkLengthOf(self, values):
         if len(values) != len(self.columns):
@@ -58,22 +60,22 @@ class Table:
             self.records.pop(index)
 
     def saveOnStorage(self):
-        tablePath = self.creatorDb.root + name + '.table'
+        tablePath = self.creatorDbRoot + self.name + '.table'
         with open(tablePath, 'w') as file:
-            dump(self.__dict__, file)
+            json.dump(self.__dict__, file)
 
     def deleteFromStorage(self):
-        tablePath = self.creatorDb.root + name + '.table'
+        tablePath = self.creatorDbRoot + self.name + '.table'
         if Path(tablePath).is_file():
-            remove(tablePath)
+            os.remove(tablePath)
         else:
             raise Exception('Deleting non existing file')
 
     def update(self, recordIndex, fieldIndex, value):
-        if not isinstance(value, self.types[fieldIndex]):
+        neededType = TYPE_BY_CODE[self.types[fieldIndex]]
+        if not isinstance(value, neededType):
             raise ValueError(
-                'New value type should be ' + str(self.types[fieldIndex]) +
+                'New value type should be ' + str(neededType) +
                 ' instead of ' + str(type(value)))
         
         self.records[recordIndex][fieldIndex] = value
-
