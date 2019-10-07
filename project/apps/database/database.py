@@ -6,7 +6,7 @@ from ..table.table import Table
 
 
 # TODO: Replace as import from controller
-DATABASES_ROOT_DIRECTORY = 'C:\\Projects\\database\\'
+DATABASES_ROOT_DIRECTORY = os.sep.join(['C:', 'Projects', 'database'])
 
 
 # Database essentially is a context for tables
@@ -16,7 +16,7 @@ class Database:
     def create(name):
         database = Database()
         database.name = name
-        database.root = DATABASES_ROOT_DIRECTORY + name + '\\'
+        database.root = os.sep.join([DATABASES_ROOT_DIRECTORY, name])
         database.tables = []
 
         if not Path(database.root).exists():
@@ -56,7 +56,7 @@ class Database:
         
         delattr(self, 'tables')
 
-        with open(self.root + 'config.txt', 'w') as file:
+        with open(os.sep.join([self.root, self.name + '.dbconfig']), 'w') as file:
             json.dump(self.__dict__, file, skipkeys=True)
 
     def deleteFromStorage(self):

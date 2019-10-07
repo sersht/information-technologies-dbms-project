@@ -89,12 +89,12 @@ class Table:
             self.records.pop(index)
 
     def saveOnStorage(self):
-        tablePath = self.creatorDbRoot + self.name + '.table'
+        tablePath = os.sep.join([self.creatorDbRoot, self.name + '.table'])
         with open(tablePath, 'w') as file:
             json.dump(self.__dict__, file)
 
     def deleteFromStorage(self):
-        tablePath = self.creatorDbRoot + self.name + '.table'
+        tablePath = os.sep.join([self.creatorDbRoot, self.name + '.table'])
         if not Path(tablePath).is_file():
             raise Exception('Deleting non existing file')
         os.remove(tablePath)
