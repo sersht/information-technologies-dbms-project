@@ -51,10 +51,13 @@ class Database:
         return tables
 
     def saveOnStorage(self):
-        with open(self.root + 'config.txt', 'w') as file:
-            json.dump(self.__dict__, file)
+        for table in self.tables:
+            table.saveOnStorage()
         
-        # Надо сделать - при сохранении базы данных - сохранять состояние всех таблиц
+        delattr(self, 'tables')
+
+        with open(self.root + 'config.txt', 'w') as file:
+            json.dump(self.__dict__, file, skipkeys=True)
 
     def deleteFromStorage(self):
         # Recursively removes all directories-tree from the root
