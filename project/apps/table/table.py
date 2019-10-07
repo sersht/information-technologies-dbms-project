@@ -69,8 +69,12 @@ class Table:
             self.records.insert(index, deepcopy(values))
 
     # TODO: think about better index management
-    def update(self, recordIndex, fieldIndex, value):
+    def update(self, recordIndex, fieldName, value):
+        
+        # TODO: replace with smth better complexity
+        fieldIndex = self.columns.index(fieldName) 
         neededType = TYPE_BY_CODE[self.types[fieldIndex]]
+
         if not isinstance(value, neededType):
             raise ValueError(
                 'New value type should be ' + str(neededType) +
