@@ -11,19 +11,19 @@ class Segment:
     
     @left.setter
     def left(self, value):
-        if isinstance(value, Number):
-            self._left = value
-        raise TypeError('Left end of a segment should be a number')
+        if not isinstance(value, Number):
+            raise TypeError('Left end of a segment should be a number')
+        self._left = value
 
     @property
     def right(self):
         return self._right
     
-    @left.setter
+    @right.setter
     def right(self, value):
-        if isinstance(value, Number):
-            self._right = value
-        raise TypeError('Right end of a segment should be a number')
+        if not isinstance(value, Number):
+            raise TypeError('Right end of a segment should be a number')
+        self._right = value
 
     def contains(self, value):
         if isinstance(value, Number):

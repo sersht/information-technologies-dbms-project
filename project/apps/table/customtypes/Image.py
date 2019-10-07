@@ -32,6 +32,7 @@ class Image:
             bytesLiteralRepresentation = str(self._imageBytesBase64)
             return bytesLiteralRepresentation[2:-1]
 
+    # TODO: maybe add name, type validation
     def saveOnStorage(self, directoryPath, name, type):
         if not Path(directoryPath).is_dir():
             raise ValueError('Given path does not exist or is not a directory')
