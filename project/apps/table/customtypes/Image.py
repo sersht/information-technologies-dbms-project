@@ -1,3 +1,4 @@
+import os
 import base64
 from pathlib import Path
 
@@ -31,11 +32,12 @@ class Image:
             bytesLiteralRepresentation = str(self._imageBytesBase64)
             return bytesLiteralRepresentation[2:-1]
 
-    def saveOnStorage(self, directoryPath='', name='default-image', type='jpg'):
-        if directoryPath and not Path(directoryPath).is_dir():
+    def saveOnStorage(self, directoryPath, name, type):
+        if not Path(directoryPath).is_dir():
             raise ValueError('Given path does not exist or is not a directory')
-
-        fullImagePath = directoryPath + name + '.' + type
+        
+        fullFileName = name + '.' + type
+        fullImagePath = os.path.join(directoryPath, fullFileName)
 
         with open(fullImagePath, 'wb') as file:
             file.write(base64.b64decode(self._imageBytesBase64))
