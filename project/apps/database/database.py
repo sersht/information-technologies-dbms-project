@@ -1,5 +1,5 @@
-from os import makedirs
-from json import dump, load
+import os
+import json
 from shutil import rmtree
 from pathlib import Path
 
@@ -19,7 +19,7 @@ class Database:
         database.tables = []
 
         if not Path(database.root).exists():
-            makedirs(database.root)
+            os.makedirs(database.root)
         
         database.saveOnStorage()
 
@@ -33,13 +33,15 @@ class Database:
         database = Database()
 
         with open(configPath, 'r') as file:
-            database.__dict__ = load(file)
+            database.__dict__ = json.load(file)
 
         return database
 
     def saveOnStorage(self):
         with open(self.root + 'config.txt', 'w') as file:
-            dump(self.__dict__, file)
+            json.dump(self.__dict__, file)
+        
+        # Надо сделать - при сохранении базы данных - сохранять состояние всех таблиц
 
     def deleteFromStorage(self):
         # Recursively removes all directories-tree from the root
