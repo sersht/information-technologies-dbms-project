@@ -2,6 +2,7 @@ import os
 import json
 from shutil import rmtree
 from pathlib import Path
+from ..table.table import Table
 
 
 # TODO: Replace as import from controller
@@ -35,7 +36,19 @@ class Database:
         with open(configPath, 'r') as file:
             database.__dict__ = json.load(file)
 
+        database.tables = Database._restoreTables(database.root)
+
         return database
+
+    @staticmethod
+    def _restoreTables(root):
+        tables = []
+
+        for file in os.listdir(root):
+            if file.endswith(".table"):
+                tables.append(Table.restore(os.path.join(root, file)))
+        
+        return tables
 
     def saveOnStorage(self):
         with open(self.root + 'config.txt', 'w') as file:
