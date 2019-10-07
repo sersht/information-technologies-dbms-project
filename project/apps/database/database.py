@@ -17,7 +17,7 @@ class Database:
         database = Database()
         database.name = name
         database.root = os.sep.join([DATABASES_ROOT_DIRECTORY, name])
-        database.tables = []
+        database.tables = {}
 
         if not Path(database.root).exists():
             os.makedirs(database.root)
@@ -42,16 +42,17 @@ class Database:
 
     @staticmethod
     def _restoreTables(root):
-        tables = []
+        tables = {}
 
         for file in os.listdir(root):
             if file.endswith(".table"):
-                tables.append(Table.restore(os.path.join(root, file)))
+                table = Table.restore(os.path.join(root, file))
+                tables[table.name] = table
         
         return tables
 
     def saveOnStorage(self):
-        for table in self.tables:
+        for table in self.tables.values():
             table.saveOnStorage()
         
         delattr(self, 'tables')
