@@ -16,8 +16,12 @@ class Table:
 
     @staticmethod
     def create(name, columnNames, columnTypes, databaseRoot):
+        
         if len(columnNames) != len(columnTypes):
-            raise ValueError('Unequal length of column-type and column-name lists')
+            raise ValueError('Unequal length of column-type and column-name lists!')
+
+        if len(set(columnNames)) != len(columnNames):
+            raise ValueError('Column names should be unique!')
 
         table = Table()
         table.creatorDbRoot = databaseRoot
