@@ -1,5 +1,5 @@
-from .Image import Image
-from .Segment import Segment
+from project.apps.table.customtypes.image import Image
+from project.apps.table.customtypes.segment import Segment
 
 TYPE_BY_CODE = {
     'int': int,

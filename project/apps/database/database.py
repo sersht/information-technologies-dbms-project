@@ -2,7 +2,7 @@ import os
 import json
 from shutil import rmtree
 from pathlib import Path
-from ..table.table import Table
+from project.apps.table.table import Table
 
 
 # TODO: Replace as import from controller

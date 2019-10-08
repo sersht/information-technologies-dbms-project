@@ -2,7 +2,7 @@ import json
 import os
 from copy import deepcopy
 from pathlib import Path
-from .customtypes.TypesMap import TYPE_BY_CODE
+from project.apps.table.customtypes.types_map import TYPE_BY_CODE
 
 
 # Temporary storing all records in table as two-dimensional list (array)
