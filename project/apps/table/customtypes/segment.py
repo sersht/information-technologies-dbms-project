@@ -1,7 +1,7 @@
 from numbers import Number
 
 class Segment:
-    def __init__(self, leftEnd=float('-inf'), rightEnd=float('inf')):
+    def __init__(self, leftEnd, rightEnd):
         self._left = leftEnd
         self._right = rightEnd
     
