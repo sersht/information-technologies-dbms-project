@@ -63,3 +63,15 @@ class Database:
     def deleteFromStorage(self):
         # Recursively removes all directories-tree from the root
         rmtree(self.root)
+
+    def addTable(self, name, columns, types):        
+        if name in self.tables.keys():
+            raise Exception('Table ' + "'" + name + "'" + 'already exists')
+        
+        self.tables[name] = Table.create(name, columns, types, self.root)
+
+    def removeTable(self, name):
+        if name not in self.tables.keys():
+            raise Exception('Table ' + "'" + name + "'" + 'does not exist')
+
+        self.tables.pop(name)
