@@ -60,18 +60,20 @@ class Database:
         with open(os.sep.join([self.root, self.name + '.dbconfig']), 'w') as file:
             json.dump(self.__dict__, file, skipkeys=True)
 
+        self.tables = {}
+
     def deleteFromStorage(self):
         # Recursively removes all directories-tree from the root
         rmtree(self.root)
 
     def addTable(self, name, columns, types):        
         if name in self.tables.keys():
-            raise Exception('Table ' + "'" + name + "'" + 'already exists')
+            raise Exception('Table ' + "'" + name + "'" + ' already exists')
         
         self.tables[name] = Table.create(name, columns, types, self.root)
 
     def removeTable(self, name):
         if name not in self.tables.keys():
-            raise Exception('Table ' + "'" + name + "'" + 'does not exist')
+            raise Exception('Table ' + "'" + name + "'" + ' does not exist')
 
         self.tables.pop(name)
