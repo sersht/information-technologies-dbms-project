@@ -69,7 +69,7 @@ class Table:
             
             if not isinstance(values[i], neededType):
                 presentedType = type(values[i])
-                raise ValueError(i + '-th field should be type ' + str(neededType) +
+                raise ValueError(str(i) + '-th field should be type ' + str(neededType) +
                                  ' instead of ' + str(presentedType))
 
     # TODO: values should be list
