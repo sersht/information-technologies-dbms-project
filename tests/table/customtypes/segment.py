@@ -6,7 +6,7 @@ from project.apps.table.customtypes.segment import Segment
 class TestSegment(unittest.TestCase):
 
     def setUp(self):
-        self.segment = Segment()
+        self.segment = Segment(0, 1)
 
     def test_assignment(self):
         with self.assertRaises(TypeError):
