@@ -22,6 +22,9 @@ class Table:
 
         if len(set(columnNames)) != len(columnNames):
             raise ValueError('Column names should be unique!')
+        
+        if any(typeCode not in TYPE_BY_CODE.keys() for typeCode in columnTypes):
+            raise ValueError('Unsupported type!')
 
         table = Table()
         table.creatorDbRoot = databaseRoot
