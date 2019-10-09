@@ -1,6 +1,6 @@
 import unittest
-from tests.customtypes.image import TestImage
-from tests.customtypes.segment import TestSegment
+from tests.table.customtypes.image import TestImage
+from tests.table.customtypes.segment import TestSegment
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
