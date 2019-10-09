@@ -4,22 +4,27 @@ from pathlib import Path
 
 
 class Image:
-    def __init__(self, inputData, isFilePath=True):
-        if isFilePath:
-            self._createFromImageFile(inputData)
-        else:
-            self._createFromBase64Code(inputData)
-
-    def _createFromImageFile(self, imagePath):
-        if not Path(imagePath).is_file():
+    
+    @staticmethod
+    def create(path):
+        if not Path(path).is_file():
             raise ValueError('Given path is not a file')
+        
+        image = Image()
 
         # Assume that image path file is actually an image
-        with open(imagePath, 'rb') as file:
-            self._imageBytesBase64 = base64.b64encode(file.read())
+        with open(path, 'rb') as file:
+            image._imageBytesBase64 = base64.b64encode(file.read())
 
-    def _createFromBase64Code(self, data):
-        self._imageBytesBase64 = data
+        return image
+
+    @staticmethod
+    def restore(data):
+        image = Image()
+        
+        image._imageBytesBase64 = data
+        
+        return image
 
     # Returns base64 encoded image file in string format
     @property

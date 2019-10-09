@@ -2,6 +2,7 @@ import json
 import os
 from copy import deepcopy
 from pathlib import Path
+from project.apps.table.data_converter import DataConverter
 from project.apps.table.customtypes.types_map import TYPE_BY_CODE
 
 
@@ -22,6 +23,9 @@ class Table:
 
         if len(set(columnNames)) != len(columnNames):
             raise ValueError('Column names should be unique!')
+        
+        if any(typeCode not in TYPE_BY_CODE.keys() for typeCode in columnTypes):
+            raise ValueError('Unsupported type!')
 
         table = Table()
         table.creatorDbRoot = databaseRoot
@@ -42,7 +46,14 @@ class Table:
         table = Table()
 
         with open(configPath, 'r') as file:
-            table.__dict__ = json.load(file)
+            deserializedDict = json.load(file)
+
+        for i in range(len(deserializedDict['records'])):
+            for j in range(len(deserializedDict['records'][i])):
+                Type = TYPE_BY_CODE[deserializedDict['types'][j]]
+                deserializedDict['records'][i][j] = DataConverter.deserialize(deserializedDict['records'][i][j], Type)
+
+        table.__dict__ = deserializedDict
 
         return table
 
@@ -98,8 +109,14 @@ class Table:
 
     def saveOnStorage(self):
         tablePath = os.sep.join([self.creatorDbRoot, self.name + '.table'])
+        serializedDict = deepcopy(self.__dict__)
+
+        for i in range(len(serializedDict['records'])):
+            for j in range(len(serializedDict['records'][i])):
+                serializedDict['records'][i][j] = DataConverter.serialize(serializedDict['records'][i][j])
+        
         with open(tablePath, 'w') as file:
-            json.dump(self.__dict__, file)
+            json.dump(serializedDict, file)
 
     def deleteFromStorage(self):
         tablePath = os.sep.join([self.creatorDbRoot, self.name + '.table'])
