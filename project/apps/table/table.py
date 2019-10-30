@@ -66,7 +66,7 @@ class Table:
 
         for i in range(len(values)):
             neededType = TYPE_BY_CODE[self.types[i]]
-            
+
             if not isinstance(values[i], neededType):
                 presentedType = type(values[i])
                 raise ValueError(str(i) + '-th field should be type ' + str(neededType) +
@@ -85,7 +85,7 @@ class Table:
 
     # TODO: think about better index management
     def update(self, recordIndex, fieldName, value):
-        
+        # TODO: add check if is legal to update
         # TODO: replace with smth better complexity
         fieldIndex = self.columns.index(fieldName) 
         neededType = TYPE_BY_CODE[self.types[fieldIndex]]

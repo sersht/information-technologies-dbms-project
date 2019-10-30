@@ -20,12 +20,20 @@ postRequestParser.add_argument('types', action='append', location='json', requir
 putRequestParser = reqparse.RequestParser()
 putRequestParser.add_argument('index', type=int, location='json')
 putRequestParser.add_argument('values', action='append', location='json', required=True)
+
+patchRequestParser = reqparse.RequestParser()
+patchRequestParser.add_argument('index', type=int, location='json', required=True)
+patchRequestParser.add_argument('column', location='json', required=True)
+patchRequestParser.add_argument('value', location='json', required=True)
 # --------
 
-def deserializedValues(types, values):
+def deserializeValue(type, value):
+    return DataConverter.deserializeFromString(value, type)
+
+def deserializeValues(types, values):
     result = []
     for i in range(len(types)):
-        result.append(DataConverter.deserializeFromString(values[i], TYPE_BY_CODE[types[i]]))
+        result.append(deserializeValue(TYPE_BY_CODE[types[i]], values[i]))
     return result
 
 class TableResource(Resource):
@@ -48,19 +56,34 @@ class TableResource(Resource):
 
         db.addTable(table, postRequest['columns'], postRequest['types'])
 
-        return 'Created ' + table + ' in ' + database
+        return 'Created {} table in {} database'.format(table, database)
 
     def delete(self, database, table):
         db = Database.restore(os.sep.join([DB_ROOT, database]))
         db.removeTable(table)
-        return 'Deleted ' + table + ' in ' + database
+        return 'Deleted {} table in {} database'.format(table, database)
 
     def put(self, database, table):
         putRequest = putRequestParser.parse_args()
         creatorDbConfig = os.sep.join([DB_ROOT, database, database + '.dbconfig'])
         table_ = Database.restore(creatorDbConfig).tables[table]
 
-        table_.insert(deserializedValues(table_.types, putRequest['values']), putRequest['index'])
+        table_.insert(deserializeValues(table_.types, putRequest['values']), putRequest['index'])
         table_.saveOnStorage()
 
-        return 'Added new row in ' + table + ' in ' + database
+        return 'Added new row in {} table in {} database'.format(table, database)
+
+    def patch(self, database, table):
+        patchRequest = patchRequestParser.parse_args()
+        creatorDbConfig = os.sep.join([DB_ROOT, database, database + '.dbconfig'])
+        table_ = Database.restore(creatorDbConfig).tables[table]
+        typeIndex = table_.columns.index(patchRequest['column'])
+
+        table_.update(
+            patchRequest['index'],
+            patchRequest['column'],
+            deserializeValue(TYPE_BY_CODE[table_.types[typeIndex]], patchRequest['value'])
+        )
+        table_.saveOnStorage()
+
+        return 'Updated row {} in {} table in {} database'.format(patchRequest['index'], table, database)
