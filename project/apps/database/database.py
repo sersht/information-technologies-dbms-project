@@ -3,10 +3,7 @@ import json
 from shutil import rmtree
 from pathlib import Path
 from project.apps.table.table import Table
-
-
-# TODO: Replace as import from controller
-DATABASES_ROOT_DIRECTORY = os.sep.join(['C:', 'Projects', 'database'])
+from project.config.config import DATABASES_ROOT_DIRECTORY as DB_ROOT
 
 
 # Database essentially is a context for tables
@@ -16,12 +13,12 @@ class Database:
     def create(name):
         database = Database()
         database.name = name
-        database.root = os.sep.join([DATABASES_ROOT_DIRECTORY, name])
+        database.root = os.sep.join([DB_ROOT, name])
         database.tables = {}
 
         if not Path(database.root).exists():
             os.makedirs(database.root)
-        
+
         database.saveOnStorage()
 
         return database
@@ -48,13 +45,13 @@ class Database:
             if file.endswith(".table"):
                 table = Table.restore(os.path.join(root, file))
                 tables[table.name] = table
-        
+
         return tables
 
     def saveOnStorage(self):
         for table in self.tables.values():
             table.saveOnStorage()
-        
+
         delattr(self, 'tables')
 
         with open(os.sep.join([self.root, self.name + '.dbconfig']), 'w') as file:
@@ -66,10 +63,10 @@ class Database:
         # Recursively removes all directories-tree from the root
         rmtree(self.root)
 
-    def addTable(self, name, columns, types):        
+    def addTable(self, name, columns, types):
         if name in self.tables.keys():
             raise Exception('Table ' + "'" + name + "'" + ' already exists')
-        
+
         self.tables[name] = Table.create(name, columns, types, self.root)
 
     def removeTable(self, name):

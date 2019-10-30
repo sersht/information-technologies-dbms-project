@@ -1,9 +1,7 @@
 import os
 from flask_restful import Resource, fields, marshal_with
 from project.apps.database.database import Database
-
-# TODO: same hardcoded constant in database.py
-DATABASES_ROOT_DIRECTORY = os.sep.join(['C:', 'Projects', 'database'])
+from project.config.config import DATABASES_ROOT_DIRECTORY as DB_ROOT
 
 get_response_description = {
     'columnTypes': fields.List(fields.String),
@@ -16,7 +14,7 @@ class TableResource(Resource):
 
     @marshal_with(get_response_description)
     def get(self, database, table):
-        dbConfigPath = os.sep.join([DATABASES_ROOT_DIRECTORY, database, database + '.dbconfig'])
+        dbConfigPath = os.sep.join([DB_ROOT, database, database + '.dbconfig'])
         db = Database.restore(dbConfigPath)
         tbl = db.tables[table]
         return {
@@ -29,7 +27,7 @@ class TableResource(Resource):
         pass
 
     def delete(self, database, table):
-        db = Database.restore(os.sep.join([DATABASES_ROOT_DIRECTORY, database]))
+        db = Database.restore(os.sep.join([DB_ROOT, database]))
         db.removeTable(table)
         return 'Deleted ' + table + ' in ' + database
 
