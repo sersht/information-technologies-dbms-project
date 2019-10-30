@@ -47,3 +47,6 @@ class Image:
 
         with open(fullImagePath, 'wb') as file:
             file.write(base64.b64decode(self._imageBytesBase64))
+
+    def __repr__(self):
+        return self.data

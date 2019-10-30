@@ -35,4 +35,6 @@ class Segment:
         if self._left == other._left:
             return self._right < other._right
         return self._left < other._left
-        
+
+    def __repr__(self):
+        return '[{}, {}]'.format(self.left, self.right)
