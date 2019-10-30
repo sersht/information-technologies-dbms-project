@@ -25,3 +25,17 @@ class DataConverter:
 
         if Type is Segment:
             return Segment(data[0], data[1])
+
+    # Method for JSON queries
+    # TODO: maybe remove it to some other place
+    @staticmethod
+    def deserializeFromString(data, Type):
+        if Type is int or Type is float or Type is str:
+            return Type(data)
+
+        if Type is Image:
+            return Image.restore(data)
+
+        if Type is Segment:
+            segment = list(map(lambda x: float(x), data[1:-1].split(',')))
+            return Segment(segment[0], segment[1])
