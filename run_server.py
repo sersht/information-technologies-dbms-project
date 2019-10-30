@@ -1,3 +1,4 @@
+# TODO: all resources require testing
 from flask import Flask
 from flask_restful import Api
 from project.api.resources.databases_list import DatabasesListResource
