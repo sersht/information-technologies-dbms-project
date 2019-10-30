@@ -1,14 +1,20 @@
 import os
-from flask_restful import Resource, fields, marshal_with
+from flask_restful import Resource, fields, marshal_with, reqparse
 from project.apps.database.database import Database
 from project.config.config import DATABASES_ROOT_DIRECTORY as DB_ROOT
 
 get_response_description = {
-    'columnTypes': fields.List(fields.String),
-    'columnNames': fields.List(fields.String),
+    'types': fields.List(fields.String),
+    'columns': fields.List(fields.String),
     'records': fields.List(fields.List(fields.String))
 }
 
+# --------
+# Fold/Remove this block into some readable form
+postRequestParser = reqparse.RequestParser()
+postRequestParser.add_argument('columns', action='append', location='json', required=True)
+postRequestParser.add_argument('types', action='append', location='json', required=True)
+# --------
 
 class TableResource(Resource):
 
@@ -18,13 +24,23 @@ class TableResource(Resource):
         db = Database.restore(dbConfigPath)
         tbl = db.tables[table]
         return {
-            'columnTypes': tbl.types,
-            'columnNames': tbl.columns,
+            'types': tbl.types,
+            'columns': tbl.columns,
             'records': tbl.records
         }
 
     def post(self, database, table):
-        pass
+        postRequest = postRequestParser.parse_args()
+
+        columns = postRequest['columns']
+        types = postRequest['types']
+        creatorDbRoot = os.sep.join([DB_ROOT, database])
+        creatorDbConfig = os.sep.join([creatorDbRoot, database + '.dbconfig'])
+
+        db = Database.restore(creatorDbConfig)
+        db.addTable(table, columns, types)
+
+        return 'Created ' + table + ' in ' + database
 
     def delete(self, database, table):
         db = Database.restore(os.sep.join([DB_ROOT, database]))
