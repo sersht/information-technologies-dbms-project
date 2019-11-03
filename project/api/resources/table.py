@@ -22,9 +22,10 @@ putRequestParser.add_argument('index', type=int, location='json')
 putRequestParser.add_argument('values', action='append', location='json', required=True)
 
 patchRequestParser = reqparse.RequestParser()
+patchRequestParser.add_argument('action', location='json', required=True)
 patchRequestParser.add_argument('index', type=int, location='json', required=True)
-patchRequestParser.add_argument('column', location='json', required=True)
-patchRequestParser.add_argument('value', location='json', required=True)
+patchRequestParser.add_argument('column', location='json')
+patchRequestParser.add_argument('value', location='json')
 # --------
 
 def deserializeValue(type, value):
@@ -77,13 +78,21 @@ class TableResource(Resource):
         patchRequest = patchRequestParser.parse_args()
         creatorDbConfig = os.sep.join([DB_ROOT, database, database + '.dbconfig'])
         table_ = Database.restore(creatorDbConfig).tables[table]
-        typeIndex = table_.columns.index(patchRequest['column'])
 
-        table_.update(
-            patchRequest['index'],
-            patchRequest['column'],
-            deserializeValue(TYPE_BY_CODE[table_.types[typeIndex]], patchRequest['value'])
-        )
-        table_.saveOnStorage()
+        if patchRequest['action'] == 'update':
+            typeIndex = table_.columns.index(patchRequest['column'])
 
-        return 'Updated row {} in {} table in {} database'.format(patchRequest['index'], table, database)
+            table_.update(
+                patchRequest['index'],
+                patchRequest['column'],
+                deserializeValue(TYPE_BY_CODE[table_.types[typeIndex]], patchRequest['value'])
+            )
+            table_.saveOnStorage()
+
+            return 'Updated row {} in {} table in {} database'.format(patchRequest['index'], table, database)
+
+        if patchRequest['action'] == 'delete':
+            table_.delete(patchRequest['index'])
+            table_.saveOnStorage()
+
+            return 'Deleted row {} in {} table in {} database'.format(patchRequest['index'], table, database)
