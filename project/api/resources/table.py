@@ -60,7 +60,7 @@ class TableResource(Resource):
         return 'Created {} table in {} database'.format(table, database)
 
     def delete(self, database, table):
-        db = Database.restore(os.sep.join([DB_ROOT, database]))
+        db = Database.restore(os.sep.join([DB_ROOT, database, database + '.dbconfig']))
         db.removeTable(table)
         return 'Deleted {} table in {} database'.format(table, database)
 

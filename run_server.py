@@ -1,5 +1,6 @@
 # TODO: all resources require testing
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Api
 from project.api.resources.databases_list import DatabasesListResource
 from project.api.resources.database import DatabaseResource
@@ -11,6 +12,8 @@ api = Api(app)
 api.add_resource(DatabasesListResource, '/databases')
 api.add_resource(DatabaseResource, '/databases/<string:database>')
 api.add_resource(TableResource, '/databases/<string:database>/tables/<string:table>')
+
+cors = CORS(app)
 
 if __name__ == '__main__':
     app.run(debug=True)
