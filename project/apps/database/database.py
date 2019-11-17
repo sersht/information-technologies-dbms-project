@@ -73,4 +73,5 @@ class Database:
         if name not in self.tables.keys():
             raise Exception('Table ' + "'" + name + "'" + ' does not exist')
 
+        self.tables[name].deleteFromStorage()
         self.tables.pop(name)
