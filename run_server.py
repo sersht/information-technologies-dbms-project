@@ -5,6 +5,7 @@ from flask_restful import Api
 from project.api.resources.databases_list import DatabasesListResource
 from project.api.resources.database import DatabaseResource
 from project.api.resources.table import TableResource
+from project.connector.database_connector import DatabaseConnector
 
 app = Flask(__name__)
 api = Api(app)
@@ -17,3 +18,5 @@ cors = CORS(app)
 
 if __name__ == '__main__':
     app.run(debug=True)
+    #c = DatabaseConnector()
+    #c.deletDatabaseFromList("s123")
