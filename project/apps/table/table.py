@@ -1,7 +1,5 @@
 import json
-import os
 from copy import deepcopy
-from pathlib import Path
 from project.apps.table.data_converter import DataConverter
 from project.apps.table.customtypes.types_map import TYPE_BY_CODE
 from project.connector.database_connector import DatabaseConnector

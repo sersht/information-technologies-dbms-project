@@ -1,8 +1,4 @@
-import os
-import json
-from shutil import rmtree
 from project.apps.table.table import Table
-from project.config.config import DATABASES_ROOT_DIRECTORY as DB_ROOT
 from project.connector.database_connector import DatabaseConnector
 
 

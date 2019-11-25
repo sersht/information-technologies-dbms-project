@@ -1,6 +1,4 @@
-import os
 from flask_restful import Resource, fields, marshal_with_field
-from project.config.config import DATABASES_ROOT_DIRECTORY as DB_ROOT
 from project.connector.database_connector import DatabaseConnector
 
 

@@ -1,7 +1,5 @@
-import os
 from flask_restful import Resource, fields, marshal_with, reqparse
 from project.apps.database.database import Database
-from project.config.config import DATABASES_ROOT_DIRECTORY as DB_ROOT
 from project.apps.table.data_converter import DataConverter
 from project.apps.table.customtypes.types_map import TYPE_BY_CODE
 

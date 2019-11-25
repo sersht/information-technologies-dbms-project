@@ -1,7 +1,5 @@
-import os
 from flask_restful import Resource, fields, marshal_with
 from project.apps.database.database import Database
-from project.config.config import DATABASES_ROOT_DIRECTORY as DB_ROOT
 from project.connector.database_connector import DatabaseConnector
 
 get_response_description = {
