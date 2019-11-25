@@ -1,7 +1,5 @@
-import os
 from flask_restful import Resource, fields, marshal_with, reqparse
 from project.apps.database.database import Database
-from project.config.config import DATABASES_ROOT_DIRECTORY as DB_ROOT
 from project.apps.table.data_converter import DataConverter
 from project.apps.table.customtypes.types_map import TYPE_BY_CODE
 
@@ -31,18 +29,19 @@ patchRequestParser.add_argument('value', location='json')
 def deserializeValue(type, value):
     return DataConverter.deserializeFromString(value, type)
 
+
 def deserializeValues(types, values):
     result = []
     for i in range(len(types)):
         result.append(deserializeValue(TYPE_BY_CODE[types[i]], values[i]))
     return result
 
+
 class TableResource(Resource):
 
     @marshal_with(get_response_description)
     def get(self, database, table):
-        dbConfigPath = os.sep.join([DB_ROOT, database, database + '.dbconfig'])
-        db = Database.restore(dbConfigPath)
+        db = Database.restoreFromDb(database)
         tbl = db.tables[table]
         return {
             'types': tbl.types,
@@ -52,32 +51,29 @@ class TableResource(Resource):
 
     def post(self, database, table):
         postRequest = postRequestParser.parse_args()
-        creatorDbConfig = os.sep.join([DB_ROOT, database, database + '.dbconfig'])
-        db = Database.restore(creatorDbConfig)
+        db = Database.restoreFromDb(database)
 
         db.addTable(table, postRequest['columns'], postRequest['types'])
 
         return 'Created {} table in {} database'.format(table, database)
 
     def delete(self, database, table):
-        db = Database.restore(os.sep.join([DB_ROOT, database, database + '.dbconfig']))
+        db = Database.restoreFromDb(database)
         db.removeTable(table)
         return 'Deleted {} table in {} database'.format(table, database)
 
     def put(self, database, table):
         putRequest = putRequestParser.parse_args()
-        creatorDbConfig = os.sep.join([DB_ROOT, database, database + '.dbconfig'])
-        table_ = Database.restore(creatorDbConfig).tables[table]
+        table_ = Database.restoreFromDb(database).tables[table]
 
         table_.insert(deserializeValues(table_.types, putRequest['values']), putRequest['index'])
-        table_.saveOnStorage()
+        table_.saveOnDatabase()
 
         return 'Added new row in {} table in {} database'.format(table, database)
 
     def patch(self, database, table):
         patchRequest = patchRequestParser.parse_args()
-        creatorDbConfig = os.sep.join([DB_ROOT, database, database + '.dbconfig'])
-        table_ = Database.restore(creatorDbConfig).tables[table]
+        table_ = Database.restoreFromDb(database).tables[table]
 
         if patchRequest['action'] == 'update':
             typeIndex = table_.columns.index(patchRequest['column'])
@@ -87,12 +83,12 @@ class TableResource(Resource):
                 patchRequest['column'],
                 deserializeValue(TYPE_BY_CODE[table_.types[typeIndex]], patchRequest['value'])
             )
-            table_.saveOnStorage()
+            table_.saveOnDatabase()
 
             return 'Updated row {} in {} table in {} database'.format(patchRequest['index'], table, database)
 
         if patchRequest['action'] == 'delete':
             table_.delete(patchRequest['index'])
-            table_.saveOnStorage()
+            table_.saveOnDatabase()
 
             return 'Deleted row {} in {} table in {} database'.format(patchRequest['index'], table, database)

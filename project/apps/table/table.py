@@ -1,9 +1,8 @@
 import json
-import os
 from copy import deepcopy
-from pathlib import Path
 from project.apps.table.data_converter import DataConverter
 from project.apps.table.customtypes.types_map import TYPE_BY_CODE
+from project.connector.database_connector import DatabaseConnector
 
 
 # Temporary storing all records in table as two-dimensional list (array)
@@ -16,37 +15,37 @@ from project.apps.table.customtypes.types_map import TYPE_BY_CODE
 class Table:
 
     @staticmethod
-    def create(name, columnNames, columnTypes, databaseRoot):
-        
+    def create(name, database, columnNames, columnTypes):
+
         if len(columnNames) != len(columnTypes):
             raise ValueError('Unequal length of column-type and column-name lists!')
 
         if len(set(columnNames)) != len(columnNames):
             raise ValueError('Column names should be unique!')
-        
+
         if any(typeCode not in TYPE_BY_CODE.keys() for typeCode in columnTypes):
             raise ValueError('Unsupported type!')
 
         table = Table()
-        table.creatorDbRoot = databaseRoot
+        table.database = database
         table.name = name
         table.columns = columnNames
         table.types = columnTypes
         table.records = []
 
-        table.saveOnStorage()
+        table.saveOnDatabase()
 
         return table
 
     @staticmethod
-    def restore(configPath):
-        if not Path(configPath).is_file():
-            raise Exception('Restoring table from non existing file')
-
+    def restore(dbname, tablename):
         table = Table()
 
-        with open(configPath, 'r') as file:
-            deserializedDict = json.load(file)
+        con = DatabaseConnector()
+        serializedDict = con.getTableInDatabase(dbname, tablename)
+        con.close()
+
+        deserializedDict = json.loads(serializedDict)
 
         for i in range(len(deserializedDict['records'])):
             for j in range(len(deserializedDict['records'][i])):
@@ -87,7 +86,7 @@ class Table:
     def update(self, recordIndex, fieldName, value):
         # TODO: add check if is legal to update
         # TODO: replace with smth better complexity
-        fieldIndex = self.columns.index(fieldName) 
+        fieldIndex = self.columns.index(fieldName)
         neededType = TYPE_BY_CODE[self.types[fieldIndex]]
 
         if not isinstance(value, neededType):
@@ -107,19 +106,18 @@ class Table:
         else:
             self.records.pop(index)
 
-    def saveOnStorage(self):
-        tablePath = os.sep.join([self.creatorDbRoot, self.name + '.table'])
+    def saveOnDatabase(self):
         serializedDict = deepcopy(self.__dict__)
 
         for i in range(len(serializedDict['records'])):
             for j in range(len(serializedDict['records'][i])):
                 serializedDict['records'][i][j] = DataConverter.serialize(serializedDict['records'][i][j])
-        
-        with open(tablePath, 'w') as file:
-            json.dump(serializedDict, file)
 
-    def deleteFromStorage(self):
-        tablePath = os.sep.join([self.creatorDbRoot, self.name + '.table'])
-        if not Path(tablePath).is_file():
-            raise Exception('Deleting non existing file')
-        os.remove(tablePath)
+        con = DatabaseConnector()
+        con.saveTableInDatabase(self.database, self.name, json.dumps(serializedDict))
+        con.close()
+
+    def deleteFromDatabase(self):
+        con = DatabaseConnector()
+        con.deleteTableInDatabase(self.database, self.name)
+        con.close()
