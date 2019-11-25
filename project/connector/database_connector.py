@@ -69,4 +69,11 @@ class DatabaseConnector:
         return table[0]
 
     def saveTableInDatabase(self, dbname, tablename, tabledata):
-        pass
+        if not self.checkTableExistInDatabase(dbname, tablename):
+            self.createTableInDatabase(dbname, tablename)
+
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+                "UPDATE databases SET dbname = %s, tablename = %s, tabledata = %s WHERE dbname = %s AND tablename = %s",
+                (dbname, tablename, tabledata, dbname, tablename))
+            self.connection.commit()

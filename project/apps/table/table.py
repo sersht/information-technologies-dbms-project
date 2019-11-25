@@ -116,7 +116,8 @@ class Table:
                 serializedDict['records'][i][j] = DataConverter.serialize(serializedDict['records'][i][j])
 
         con = DatabaseConnector()
-        con. json.dumps(serializedDict)
+        con.saveTableInDatabase(self.database, self.name, json.dumps(serializedDict))
+        con.close()
 
     def deleteFromDatabase(self):
         con = DatabaseConnector()
