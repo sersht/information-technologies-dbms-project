@@ -1,13 +1,12 @@
 import psycopg2
+import os
+
+DATABASE_URL = os.environ['DATABASE_URL']
 
 
 class DatabaseConnector:
     def __init__(self):
-        self.connection = psycopg2.connect(
-            dbname='dbms-project',
-            user='postgres',
-            password='123456'
-        )
+        self.connection = psycopg2.connect(DATABASE_URL, sslmode='require')
 
     def close(self):
         self.connection.close()
