@@ -10,28 +10,8 @@ from project.config.config import DATABASES_ROOT_DIRECTORY as DB_ROOT
 class Database:
 
     @staticmethod
-    def create(name):
+    def restoreFromDb(jsonDumped):
         database = Database()
-        database.name = name
-        database.root = os.sep.join([DB_ROOT, name])
-        database.tables = {}
-
-        if not Path(database.root).exists():
-            os.makedirs(database.root)
-
-        database.saveOnStorage()
-
-        return database
-
-    @staticmethod
-    def restore(configPath):
-        if not Path(configPath).is_file():
-            raise ValueError('Given path is not a file')
-
-        database = Database()
-
-        with open(configPath, 'r') as file:
-            database.__dict__ = json.load(file)
 
         database.tables = Database._restoreTables(database.root)
 

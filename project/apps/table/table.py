@@ -16,25 +16,24 @@ from project.apps.table.customtypes.types_map import TYPE_BY_CODE
 class Table:
 
     @staticmethod
-    def create(name, columnNames, columnTypes, databaseRoot):
-        
+    def create(name, columnNames, columnTypes):
+
         if len(columnNames) != len(columnTypes):
             raise ValueError('Unequal length of column-type and column-name lists!')
 
         if len(set(columnNames)) != len(columnNames):
             raise ValueError('Column names should be unique!')
-        
+
         if any(typeCode not in TYPE_BY_CODE.keys() for typeCode in columnTypes):
             raise ValueError('Unsupported type!')
 
         table = Table()
-        table.creatorDbRoot = databaseRoot
         table.name = name
         table.columns = columnNames
         table.types = columnTypes
         table.records = []
 
-        table.saveOnStorage()
+        table.saveOnDatabase()
 
         return table
 
@@ -87,7 +86,7 @@ class Table:
     def update(self, recordIndex, fieldName, value):
         # TODO: add check if is legal to update
         # TODO: replace with smth better complexity
-        fieldIndex = self.columns.index(fieldName) 
+        fieldIndex = self.columns.index(fieldName)
         neededType = TYPE_BY_CODE[self.types[fieldIndex]]
 
         if not isinstance(value, neededType):
@@ -107,14 +106,14 @@ class Table:
         else:
             self.records.pop(index)
 
-    def saveOnStorage(self):
+    def saveOnDatabase(self):
         tablePath = os.sep.join([self.creatorDbRoot, self.name + '.table'])
         serializedDict = deepcopy(self.__dict__)
 
         for i in range(len(serializedDict['records'])):
             for j in range(len(serializedDict['records'][i])):
                 serializedDict['records'][i][j] = DataConverter.serialize(serializedDict['records'][i][j])
-        
+
         with open(tablePath, 'w') as file:
             json.dump(serializedDict, file)
 

@@ -29,19 +29,26 @@ class DatabaseConnector:
             cursor.execute("DELETE FROM dblist WHERE dbname = %s", (dbname,))
             self.connection.commit()
 
-    def deleteDatabase(self, dbname):
-        with self.connection.cursor() as cursor:
-            cursor.execute("DELETE FROM databases WHERE dbname = %s", (dbname,))
-            self.connection.commit()
-
-    def createDatabase(self, dbname):
-        with self.connection.cursor() as cursor:
-            cursor.execute("INSERT INTO databases (dbname) VALUES (%s, %s)", (dbname, ""))
-            self.connection.commit()
-
     def getDatabaseTables(self, dbname):
         with self.connection.cursor() as cursor:
             cursor.execute("SELECT DISTINCT tablename FROM databases WHERE dbname = %s", (dbname,))
             tablesList = cursor.fetchall()
 
         return tablesList
+
+    def deleteAllTablesInDatabase(self, dbname):
+        with self.connection.cursor() as cursor:
+            cursor.execute("DELETE FROM databases WHERE dbname = %s", (dbname,))
+            self.connection.commit()
+
+    def createTableInDatabase(self, dbname, tablename):
+        with self.connection.cursor() as cursor:
+            cursor.execute("INSERT INTO databases (dbname, tablename, tabledata) VALUES (%s, %s, %s)",
+                           (dbname, tablename, ""))
+            self.connection.commit()
+
+    def deleteTable(self, dbname, tablename):
+        with self.connection.cursor() as cursor:
+            cursor.execute("DELETE FROM databases WHERE dbname = %s AND tablename = %s", (dbname, tablename))
+            self.connection.commit()
+    
