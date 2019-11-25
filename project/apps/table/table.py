@@ -4,6 +4,7 @@ from copy import deepcopy
 from pathlib import Path
 from project.apps.table.data_converter import DataConverter
 from project.apps.table.customtypes.types_map import TYPE_BY_CODE
+from project.connector.database_connector import DatabaseConnector
 
 
 # Temporary storing all records in table as two-dimensional list (array)
@@ -16,7 +17,7 @@ from project.apps.table.customtypes.types_map import TYPE_BY_CODE
 class Table:
 
     @staticmethod
-    def create(name, columnNames, columnTypes):
+    def create(name, database, columnNames, columnTypes):
 
         if len(columnNames) != len(columnTypes):
             raise ValueError('Unequal length of column-type and column-name lists!')
@@ -28,6 +29,7 @@ class Table:
             raise ValueError('Unsupported type!')
 
         table = Table()
+        table.database = database
         table.name = name
         table.columns = columnNames
         table.types = columnTypes
@@ -38,14 +40,12 @@ class Table:
         return table
 
     @staticmethod
-    def restore(configPath):
-        if not Path(configPath).is_file():
-            raise Exception('Restoring table from non existing file')
-
+    def restore(dbname, tablename):
         table = Table()
+        con = DatabaseConnector()
+        con.getTableInDatabase(dbname, tablename)
 
-        with open(configPath, 'r') as file:
-            deserializedDict = json.load(file)
+        deserializedDict = json.loads(serializedDict)
 
         for i in range(len(deserializedDict['records'])):
             for j in range(len(deserializedDict['records'][i])):
@@ -107,18 +107,16 @@ class Table:
             self.records.pop(index)
 
     def saveOnDatabase(self):
-        tablePath = os.sep.join([self.creatorDbRoot, self.name + '.table'])
         serializedDict = deepcopy(self.__dict__)
 
         for i in range(len(serializedDict['records'])):
             for j in range(len(serializedDict['records'][i])):
                 serializedDict['records'][i][j] = DataConverter.serialize(serializedDict['records'][i][j])
 
-        with open(tablePath, 'w') as file:
-            json.dump(serializedDict, file)
+        con = DatabaseConnector()
+        json.dumps(serializedDict)
 
-    def deleteFromStorage(self):
-        tablePath = os.sep.join([self.creatorDbRoot, self.name + '.table'])
-        if not Path(tablePath).is_file():
-            raise Exception('Deleting non existing file')
-        os.remove(tablePath)
+    def deleteFromDatabase(self):
+        con = DatabaseConnector()
+        con.deleteTableInDatabase(self.database, self.name)
+        con.close()

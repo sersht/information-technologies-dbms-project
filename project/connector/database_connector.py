@@ -47,8 +47,13 @@ class DatabaseConnector:
                            (dbname, tablename, ""))
             self.connection.commit()
 
-    def deleteTable(self, dbname, tablename):
+    def deleteTableInDatabase(self, dbname, tablename):
         with self.connection.cursor() as cursor:
             cursor.execute("DELETE FROM databases WHERE dbname = %s AND tablename = %s", (dbname, tablename))
             self.connection.commit()
-    
+
+    def getTableInDatabase(self, dbname, tablename):
+        with self.connection.cursor() as cursor:
+            cursor.execute("SELECT tabledata FROM databases WHERE dbname = %s AND tablename = %s",
+                           (dbname, tablename))
+            self.connection.commit()

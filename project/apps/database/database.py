@@ -10,11 +10,9 @@ from project.config.config import DATABASES_ROOT_DIRECTORY as DB_ROOT
 class Database:
 
     @staticmethod
-    def restoreFromDb(jsonDumped):
+    def restoreFromDb(dbname):
         database = Database()
-
-        database.tables = Database._restoreTables(database.root)
-
+        database.tables = Database._restoreTables(dbname)
         return database
 
     @staticmethod
