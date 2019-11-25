@@ -19,7 +19,7 @@ class DatabaseResource(Resource):
     @marshal_with(get_response_description)
     def get(self, database):
         con = DatabaseConnector()
-        tables = [i[0] for i in con.getDatabaseTables(database)]
+        tables = con.getDatabaseTables(database)
         con.close()
         return {
             'name': database,
@@ -30,13 +30,10 @@ class DatabaseResource(Resource):
     def post(self, database):
         con = DatabaseConnector()
         con.insertDatabaseToList(database)
-        con.createDatabase(database)
         con.close()
         return 'Created ' + database
 
     def delete(self, database):
-        con = DatabaseConnector()
-        con.deleteDatabaseFromList(database)
-        con.deleteDatabase(database)
-        con.close()
+        db = Database.restoreFromDb(database)
+        db.deleteFromDatabase()
         return 'Deleted ' + database

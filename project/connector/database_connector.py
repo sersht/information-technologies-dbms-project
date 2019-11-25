@@ -20,9 +20,12 @@ class DatabaseConnector:
         return [i[0] for i in dbList]
 
     def insertDatabaseToList(self, dbname):
-        with self.connection.cursor() as cursor:
-            cursor.execute("INSERT INTO dblist (dbname) VALUES (%s)", (dbname,))
-            self.connection.commit()
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("INSERT INTO dblist (dbname) VALUES (%s)", (dbname,))
+                self.connection.commit()
+        except:
+            pass
 
     def deleteDatabaseFromList(self, dbname):
         with self.connection.cursor() as cursor:

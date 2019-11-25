@@ -31,10 +31,7 @@ class Database:
             table.saveOnDatabase()
 
         con = DatabaseConnector()
-        try:
-            con.insertDatabaseToList(self.name)
-        except:
-            pass
+        con.insertDatabaseToList(self.name)
         con.close()
 
     def deleteFromDatabase(self):
