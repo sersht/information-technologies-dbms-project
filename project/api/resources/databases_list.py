@@ -10,6 +10,6 @@ class DatabasesListResource(Resource):
     @marshal_with_field(fields.List(fields.String))
     def get(self):
         connector = DatabaseConnector()
-        dbList = [i[0] for i in connector.getDatabasesList()]
+        dbList = connector.getDatabasesList()
         connector.close()
         return dbList

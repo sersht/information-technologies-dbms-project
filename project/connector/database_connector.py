@@ -17,7 +17,7 @@ class DatabaseConnector:
             cursor.execute("SELECT * FROM dblist")
             dbList = cursor.fetchall()
 
-        return dbList
+        return [i[0] for i in dbList]
 
     def insertDatabaseToList(self, dbname):
         with self.connection.cursor() as cursor:
@@ -34,7 +34,7 @@ class DatabaseConnector:
             cursor.execute("SELECT DISTINCT tablename FROM databases WHERE dbname = %s", (dbname,))
             tablesList = cursor.fetchall()
 
-        return tablesList
+        return [i[0] for i in tablesList]
 
     def deleteAllTablesInDatabase(self, dbname):
         with self.connection.cursor() as cursor:
@@ -56,4 +56,17 @@ class DatabaseConnector:
         with self.connection.cursor() as cursor:
             cursor.execute("SELECT tabledata FROM databases WHERE dbname = %s AND tablename = %s",
                            (dbname, tablename))
-            self.connection.commit()
+            table = cursor.fetchone()
+
+        return table[0]
+
+    def checkTableExistInDatabase(self, dbname, tablename):
+        with self.connection.cursor() as cursor:
+            cursor.execute("SELECT COUNT(1) FROM databases WHERE dbname = %s AND tablename = %s",
+                           (dbname, tablename))
+            table = cursor.fetchone()
+
+        return table[0]
+
+    def saveTableInDatabase(self, dbname, tablename, tabledata):
+        pass

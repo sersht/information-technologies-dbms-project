@@ -42,8 +42,10 @@ class Table:
     @staticmethod
     def restore(dbname, tablename):
         table = Table()
+
         con = DatabaseConnector()
-        con.getTableInDatabase(dbname, tablename)
+        serializedDict = con.getTableInDatabase(dbname, tablename)
+        con.close()
 
         deserializedDict = json.loads(serializedDict)
 
@@ -114,7 +116,7 @@ class Table:
                 serializedDict['records'][i][j] = DataConverter.serialize(serializedDict['records'][i][j])
 
         con = DatabaseConnector()
-        json.dumps(serializedDict)
+        con. json.dumps(serializedDict)
 
     def deleteFromDatabase(self):
         con = DatabaseConnector()
