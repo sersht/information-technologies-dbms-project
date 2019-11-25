@@ -17,6 +17,7 @@ api.add_resource(TableResource, '/databases/<string:database>/tables/<string:tab
 cors = CORS(app)
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    #c = DatabaseConnector()
-    #c.deletDatabaseFromList("s123")
+    #app.run(debug=True)
+    c = DatabaseConnector()
+    print()
+    c.close()
