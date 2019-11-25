@@ -18,10 +18,9 @@ class DatabaseResource(Resource):
     # Get all databases names in databases root
     @marshal_with(get_response_description)
     def get(self, database):
-        tables = []
-
-
-
+        con = DatabaseConnector()
+        tables = [i[0] for i in con.getDatabaseTables(database)]
+        con.close()
         return {
             'name': database,
             'directory': "---",

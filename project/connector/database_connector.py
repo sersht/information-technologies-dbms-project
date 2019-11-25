@@ -40,3 +40,8 @@ class DatabaseConnector:
             self.connection.commit()
 
     def getDatabaseTables(self, dbname):
+        with self.connection.cursor() as cursor:
+            cursor.execute("SELECT DISTINCT tablename FROM databases WHERE dbname = %s", (dbname,))
+            tablesList = cursor.fetchall()
+
+        return tablesList
